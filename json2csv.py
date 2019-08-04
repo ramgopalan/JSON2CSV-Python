@@ -12,6 +12,18 @@ def check_file_size(record_count,i):
         file_size = (record_count/100) + i
     return file_size
 
+#Captures the Header of the CSV (Extracts the Properties of Entity)
+def capture_row_header(data):
+    json_data = data["d"]['results'][0]
+    json_keys = []
+    i=1
+    for keys in json_data.keys():
+        if i==1:
+            i+=1
+        else:
+            json_keys.append(keys)
+    return(json_keys)
+
 url = <url>
 headers = {'accept': "application/json", 'accept': "text/csv"}
 
@@ -19,26 +31,33 @@ headers = {'accept': "application/json", 'accept': "text/csv"}
 r = requests.get(url, headers=headers, auth=(username, password))
 data = r.json()
 json_data = data["d"]['results']
-# print(len(json_data))
 filesize=1
 recordsize=-1
 i=1
 totalrecordsize =len(json_data)
 
 while totalrecordsize>0:
-    # filesize = check_file_size(recordsize,i)
-    filename = <target_location_directory>+str(i)+'.csv'
+    #Dynamic file name according to row limit
+    filename = r'C:\Users\ramgopalanv\Desktop\ECCtest0'+str(i)+'.csv'
     f = open(filename, "w", newline='', encoding="utf-8")
     csvwriter = csv.writer(f)
-    csvwriter.writerow([<CSV_Header1>,<CSV_Header2>,<CSV_Header3>])
+    json_keys = capture_row_header(data)
+    csvwriter.writerow(json_keys)
     recordsize+=1
     while((recordsize<(record_count_size)) and (recordsize<totalrecordsize)):
+        #J denotes the Row that is being inserted
         j = ((i-1)*record_count_size)+recordsize
-        csvwriter.writerow([json_data[j][<CSV_Header1>],json_data[j][<CSV_Header2>],json_data[j][<CSV_Header3>]])
+        #Fetching the Properties dynamically
+        writing_row=[]
+        for keys in json_keys:
+            writing_row.append(json_data[j][keys])
+        #Writing into respective row
+        csvwriter.writerow(writing_row)
         recordsize +=1
     i+=1
+    #Reseting the Record count for next CSV
     recordsize=-1
-    totalrecordsize-=record_count_size    
+    totalrecordsize-=record_count_size
 f.close()
 
 
