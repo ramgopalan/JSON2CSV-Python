@@ -38,7 +38,7 @@ totalrecordsize =len(json_data)
 
 while totalrecordsize>0:
     #Dynamic file name according to row limit
-    filename = r'C:\Users\ramgopalanv\Desktop\ECCtest0'+str(i)+'.csv'
+    filename = <filename>+str(i)+'.csv'
     f = open(filename, "w", newline='', encoding="utf-8")
     csvwriter = csv.writer(f)
     json_keys = capture_row_header(data)
